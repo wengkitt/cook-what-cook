@@ -1,19 +1,30 @@
-import { Plus, X } from "lucide-react";
+import { CookingPot, Plus, X } from "lucide-react";
 import { useState } from "react";
 
-function IngredientManager() {
+type IngredientManagerProps = {
+  ingredientList: string[];
+  setIngredientList: (newIngredientList: string[]) => void;
+  getRecipe: () => void;
+  loading: boolean;
+};
+
+function IngredientManager({
+  ingredientList,
+  setIngredientList,
+  getRecipe,
+  loading,
+}: IngredientManagerProps) {
   const [ingredient, setIngredient] = useState<string>("");
-  const [ingredientList, setIngredientList] = useState<string[]>([]);
 
   function addIngredient() {
     if (ingredient.trim() !== "") {
-      setIngredientList((prevList) => [...prevList, ingredient]);
+      setIngredientList([...ingredientList, ingredient]);
       setIngredient("");
     }
   }
 
   function removeIngredient(index: number) {
-    setIngredientList((prevList) => prevList.filter((_, i) => i !== index));
+    setIngredientList(ingredientList.filter((_, i) => i !== index));
   }
 
   function renderListItem() {
@@ -35,7 +46,7 @@ function IngredientManager() {
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col justify-center items-center">
         <div className="card bg-base-100 w-96 shadow-sm">
           <div className="card-body">
             <h2 className="card-title">What ingredient do you have?</h2>
@@ -50,26 +61,38 @@ function IngredientManager() {
               <button
                 className="btn btn-sm btn-primary"
                 onClick={addIngredient}
+                disabled={loading}
               >
-                <Plus />
+                <Plus size={16} />
                 Add Ingredient
               </button>
             </div>
           </div>
         </div>
-        <div className="card bg-base-100 w-96 shadow-sm">
+        <div className="card bg-base-100 w-96 shadow-sm mt-5">
           <div className="card-body">
-            <h2 className="card-title">Ingredient List</h2>
+            <div className="flex flex-row justify-between">
+              <h2 className="card-title">Ingredient List</h2>
+              {ingredientList.length != 0 && (
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={getRecipe}
+                  disabled={loading}
+                >
+                  <CookingPot size={16} />
+                  Get Recipe
+                </button>
+              )}
+            </div>
+
             {ingredientList.length == 0 ? (
               <>
                 <span className="text-center p-4">
-                  Ingredient List is Empty
+                  Ingredient List is empty...
                 </span>
               </>
             ) : (
-              <ul className="list bg-base-100 rounded-box shadow-md">
-                {renderListItem()}
-              </ul>
+              <ul className="list bg-base-100">{renderListItem()}</ul>
             )}
           </div>
         </div>
